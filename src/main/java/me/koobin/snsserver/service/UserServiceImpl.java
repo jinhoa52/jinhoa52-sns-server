@@ -2,6 +2,7 @@ package me.koobin.snsserver.service;
 
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.mapper.UserMapper;
+import me.koobin.snsserver.model.SignInfo;
 import me.koobin.snsserver.model.User;
 import me.koobin.snsserver.util.PasswordEncryptor;
 import org.springframework.stereotype.Service;
@@ -34,5 +35,13 @@ public class UserServiceImpl implements UserService {
   @Override
   public boolean isUsernameDupe(String username) {
     return userMapper.isUsernameDupe(username);
+  }
+
+  @Override
+  public User getLoginUser(SignInfo signInfo) {
+    String password = userMapper.getPassword(signInfo.getUsername());
+    if(password == null || !PasswordEncryptor.isMatch(signInfo.getPassword(), password))return null;
+
+    return userMapper.getUser(signInfo);
   }
 }
