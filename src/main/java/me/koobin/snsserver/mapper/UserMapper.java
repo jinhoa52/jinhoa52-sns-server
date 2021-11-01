@@ -1,7 +1,8 @@
 package me.koobin.snsserver.mapper;
 
-import me.koobin.snsserver.model.SignInfo;
+import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.User;
+import me.koobin.snsserver.model.UserUpdateInfo;
 import org.apache.ibatis.annotations.Mapper;
 
 /*
@@ -17,5 +18,11 @@ public interface UserMapper {
 
   String getPassword(String username);
 
-  User getUser(SignInfo signInfo);
+  User getUser(UserIdAndPassword userIdAndPassword);
+
+  void updateUser(UserUpdateInfo userUpdateInfo);
+
+  void updateUserPassword(UserIdAndPassword userIdAndPassword);
+
+  void deleteUser(String username);
 }

@@ -3,19 +3,45 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="me.koobin.snsserver.mapper.UserMapper">
+
   <insert id="insertUser" parameterType="me.koobin.snsserver.model.User">
     INSERT INTO USER (USERNAME, PASSWORD, PHONENUMBER, EMAIL, NAME)
     VALUES (#{username}, #{password}, #{phonenumber}, #{email}, #{name})
   </insert>
+
+  <update id="updateUser" parameterType="me.koobin.snsserver.model.UserUpdateInfo">
+    UPDATE user
+    SET NAME        = #{name},
+        PHONENUMBER = #{phoneNumber},
+        EMAIL       = #{email}
+    WHERE USERNAME = #{username}
+  </update>
+
+  <update id="updateUserPassword" parameterType="me.koobin.snsserver.model.UserIdAndPassword">
+    UPDATE user
+    SET PASSWORD = #{password}
+    WHERE USERNAME = #{username}
+  </update>
+  <delete id="deleteUser" parameterType="string">
+    DELETE
+    FROM USER
+    WHERE USERNAME = #{username}
+  </delete>
+
   <select id="isUsernameDupe" parameterType="string" resultType="boolean">
     SELECT EXISTS(SELECT USERNAME FROM USER WHERE USERNAME = #{username})
   </select>
-  <select id="getPassword" parameterType="string" resultType="java.lang.String" >
-    SELECT PASSWORD FROM USER WHERE USERNAME = #{username}
+
+  <select id="getPassword" parameterType="string" resultType="java.lang.String">
+    SELECT PASSWORD
+    FROM USER
+    WHERE USERNAME = #{username}
   </select>
+
   <select id="getUser" resultType="me.koobin.snsserver.model.User">
     SELECT ID, USERNAME, PASSWORD, PHONENUMBER, EMAIL, NAME
     FROM USER
     WHERE USERNAME = #{username}
   </select>
+
 </mapper>
