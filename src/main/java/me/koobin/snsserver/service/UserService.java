@@ -1,14 +1,14 @@
 package me.koobin.snsserver.service;
 
 import me.koobin.snsserver.exception.InValidValueException;
-import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.User;
+import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserUpdateParam;
 
 public interface UserService {
 
-  void signup(User user);
+  boolean signUp(User user);
 
   boolean isUsernameDupe(String username);
 
@@ -16,7 +16,7 @@ public interface UserService {
 
   void updateUser(String username, UserUpdateParam userUpdateParam);
 
-  void updateUserPassword(User username, UserPasswordUpdateParam userPasswordUpdateParam)throws InValidValueException;
+  void updateUserPassword(User user, UserPasswordUpdateParam userPasswordUpdateParam)throws InValidValueException;
 
-  void deleteUser(String username);
+  void deleteUser(User currentUser, String currentPassword) throws InValidValueException;
 }

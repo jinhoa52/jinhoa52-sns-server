@@ -1,7 +1,7 @@
 package me.koobin.snsserver.mapper;
 
-import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.User;
+import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserUpdateInfo;
 import org.apache.ibatis.annotations.Mapper;
 

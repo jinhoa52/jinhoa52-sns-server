@@ -6,7 +6,7 @@
 
   <insert id="insertUser" parameterType="me.koobin.snsserver.model.User">
     INSERT INTO USER (USERNAME, PASSWORD, PHONENUMBER, EMAIL, NAME)
-    VALUES (#{username}, #{password}, #{phonenumber}, #{email}, #{name})
+    VALUES (#{username}, #{password}, #{phoneNumber}, #{email}, #{name})
   </insert>
 
   <update id="updateUser" parameterType="me.koobin.snsserver.model.UserUpdateInfo">
