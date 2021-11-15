@@ -3,8 +3,8 @@ package me.koobin.snsserver.service;
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.mapper.UserMapper;
-import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.User;
+import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserUpdateInfo;
 import me.koobin.snsserver.model.UserUpdateParam;
@@ -24,7 +24,15 @@ public class UserServiceImpl implements UserService {
   private final UserMapper userMapper;
 
   @Override
-  public void signup(User user) {
+  public boolean signUp(User user) {
+    boolean dupe = isUsernameDupe(user.getUsername());
+    if (dupe)return false;
+    insertUser(user);
+    return true;
+
+  }
+
+  private void insertUser(User user) {
     String encodedPassword = PasswordEncryptor.encrypt(user.getPassword());
     User encryptedUser = User.builder()
         .username(user.getUsername())
@@ -34,7 +42,6 @@ public class UserServiceImpl implements UserService {
         .name(user.getName())
         .build();
     userMapper.insertUser(encryptedUser);
-
   }
 
   @Override
@@ -75,8 +82,8 @@ public class UserServiceImpl implements UserService {
     String checkNewPassword = userPasswordUpdateParam.getCheckNewPassword();
 
     if (!isValidPassword
-        || StringUtils.equals(currentPassword, newPassword)
-        || !StringUtils.equals(newPassword, checkNewPassword)) {
+        || !StringUtils.equals(newPassword, checkNewPassword)
+        || StringUtils.equals(currentPassword, newPassword)) {
       throw new InValidValueException("올바르지 않은 값입니다. 다시 입력해주세요.");
     }
 
@@ -88,8 +95,15 @@ public class UserServiceImpl implements UserService {
 
   }
 
+
+
   @Override
-  public void deleteUser(String username) {
-    userMapper.deleteUser(username);
+  public void deleteUser(User currentUser, String currentPassword) throws InValidValueException {
+    boolean isMatch = PasswordEncryptor.isMatch(currentPassword, currentUser.getPassword());
+
+    if (!isMatch) throw new InValidValueException();
+
+    userMapper.deleteUser(currentUser.getUsername());
+
   }
 }

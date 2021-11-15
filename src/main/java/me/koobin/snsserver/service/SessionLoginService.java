@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class sessionLoginService implements LoginService {
+public class SessionLoginService implements LoginService {
 
   private final HttpSession httpSession;
   @Override
