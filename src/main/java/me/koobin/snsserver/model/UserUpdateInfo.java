@@ -17,4 +17,7 @@ public class UserUpdateInfo {
 
   private final String email;
 
+  private final String profileMessage;
+
+  private final Long profileId;
 }

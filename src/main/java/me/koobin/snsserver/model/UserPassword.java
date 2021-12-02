@@ -2,10 +2,11 @@ package me.koobin.snsserver.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
-@Getter
+@Getter @NoArgsConstructor
 public class UserPassword {
-  private final String currentPassword;
+  private String currentPassword;
 
 }
