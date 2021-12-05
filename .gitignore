@@ -34,3 +34,11 @@ build/
 
 ### Database config ###
 db-secret.properties
+rds-secret.properties
+
+### Image Directory ###
+images/
+
+### AWS S3 config ###
+s3-secret.yml
+application-aws.yml

@@ -11,11 +11,11 @@ import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserPassword;
 import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserSignUpParam;
+import me.koobin.snsserver.model.UserUpdateInfo;
 import me.koobin.snsserver.model.UserUpdateParam;
 import me.koobin.snsserver.service.LoginService;
 import me.koobin.snsserver.service.UserService;
 import me.koobin.snsserver.util.ResponsesEntities;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -74,7 +74,8 @@ public class UserController {
     // profile 삭제 시 프로필 제거
 
     try {
-      userService.updateUser(currentUser, userUpdateParam, profile);
+      UserUpdateInfo userUpdateInfo = userService.updateUser(currentUser, userUpdateParam, profile);
+      loginService.updateUserInfo(currentUser, userUpdateInfo);
     } catch (FileIoException e) {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }

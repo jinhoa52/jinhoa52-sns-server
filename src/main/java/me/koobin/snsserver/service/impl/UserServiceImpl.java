@@ -1,7 +1,6 @@
-package me.koobin.snsserver.service;
+package me.koobin.snsserver.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import me.koobin.snsserver.exception.FileIoException;
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.mapper.UserMapper;
 import me.koobin.snsserver.model.User;
@@ -10,9 +9,10 @@ import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserSignUpParam;
 import me.koobin.snsserver.model.UserUpdateInfo;
 import me.koobin.snsserver.model.UserUpdateParam;
+import me.koobin.snsserver.service.FileService;
+import me.koobin.snsserver.service.UserService;
 import me.koobin.snsserver.util.PasswordEncryptor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void updateUser(User currentUser, UserUpdateParam userUpdateParam, MultipartFile profile){
+  public UserUpdateInfo updateUser(User currentUser, UserUpdateParam userUpdateParam, MultipartFile profile){
 
     // 기존 프로필 삭제 작업
     if (currentUser.getProfileId() != null) {
@@ -99,6 +99,8 @@ public class UserServiceImpl implements UserService {
         .build();
 
     userMapper.updateUser(userUpdateInfo);
+    return userUpdateInfo;
+
   }
 
   @Override

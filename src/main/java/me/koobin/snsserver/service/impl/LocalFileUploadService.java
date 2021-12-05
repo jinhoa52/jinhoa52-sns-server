@@ -1,18 +1,15 @@
-package me.koobin.snsserver.service;
+package me.koobin.snsserver.service.impl;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import me.koobin.snsserver.exception.FileIoException;
+import me.koobin.snsserver.service.FileUploadService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-@Service
-@Transactional
 @PropertySource("classpath:application.yml")
 public class LocalFileUploadService implements FileUploadService {
 

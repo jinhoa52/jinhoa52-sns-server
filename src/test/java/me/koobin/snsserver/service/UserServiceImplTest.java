@@ -5,6 +5,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import me.koobin.snsserver.exception.FileIoException;
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.mapper.UserMapper;
 import me.koobin.snsserver.model.User;
@@ -13,6 +14,7 @@ import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserSignUpParam;
 import me.koobin.snsserver.model.UserUpdateInfo;
 import me.koobin.snsserver.model.UserUpdateParam;
+import me.koobin.snsserver.service.impl.UserServiceImpl;
 import me.koobin.snsserver.util.PasswordEncryptor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.junit.jupiter.api.Assertions;
@@ -175,7 +177,7 @@ class UserServiceImplTest {
   void updateUser_notNullProfileId() {
     UserUpdateParam userUpdateParam =
         new UserUpdateParam("update_name", "010-1111-2222", "update@email.com", "message");
-    MockMultipartFile mockFile = new MockMultipartFile("profileImage", "orig", null, "bar".getBytes());
+    MockMultipartFile mockFile = new MockMultipartFile("profileImage", "orig", "image/png", "bar".getBytes());
 
     when(fileService.saveFile(mockFile)).thenReturn(1L);
 
@@ -191,15 +193,15 @@ class UserServiceImplTest {
   void updateUser_errorFileDelete() {
     UserUpdateParam userUpdateParam =
         new UserUpdateParam("update_name", "010-1111-2222", "update@email.com", "message");
-    MockMultipartFile mockFile = new MockMultipartFile("profileImage", "orig", null, "bar".getBytes());
+    MockMultipartFile mockFile = new MockMultipartFile("profileImage", "orig", "image/png", "bar".getBytes());
 
-    when(fileService.saveFile(mockFile)).thenThrow(FileUploadException.class);
+    when(fileService.saveFile(mockFile)).thenThrow(FileIoException.class);
 
+    Assertions.assertThrows(FileIoException.class, ()->{
+      userService.updateUser(encryptedTestUser, userUpdateParam, mockFile);
+    });
 
-
-    Assertions.assertDoesNotThrow(() -> userService.updateUser(encryptedTestUser, userUpdateParam, mockFile));
-
-    verify(userMapper).updateUser(any(UserUpdateInfo.class));
+    verify(userMapper, never()).updateUser(any(UserUpdateInfo.class));
     verify(fileService).saveFile(mockFile);
     verify(fileService).deleteFile(any(Long.class));
   }
