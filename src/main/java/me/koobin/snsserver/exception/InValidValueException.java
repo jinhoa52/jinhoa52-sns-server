@@ -1,6 +1,6 @@
 package me.koobin.snsserver.exception;
 
-public class InValidValueException extends Exception {
+public class InValidValueException extends RuntimeException {
 
   public InValidValueException() {
     super();

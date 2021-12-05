@@ -32,7 +32,6 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:/db-secret.properties")
 public class MyBatisConfig {
 
-
   private final ApplicationContext applicationContext;
 
   @Bean
@@ -41,6 +40,9 @@ public class MyBatisConfig {
     sqlSessionFactoryBean.setDataSource(dataSource);
     sqlSessionFactoryBean.setMapperLocations(
         applicationContext.getResources("classpath:/mapper/**/*.xml"));
+
+    sqlSessionFactoryBean.setConfigLocation(
+        applicationContext.getResource("classpath:mybatis-config.xml"));
     return sqlSessionFactoryBean.getObject();
   }
 

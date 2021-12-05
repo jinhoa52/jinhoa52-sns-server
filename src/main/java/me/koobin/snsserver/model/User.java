@@ -3,17 +3,18 @@ package me.koobin.snsserver.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @Getter
-@Builder
+@Builder @NoArgsConstructor
 public class User {
 
-  private final Long id;
+  private Long id;
 
-  private final String username;
+  private String username;
 
-  private final String password;
+  private String password;
 
   private String email;
 
@@ -21,4 +22,7 @@ public class User {
 
   private String name;
 
+  private String profileMessage;
+
+   private Long profileId;
 }

@@ -1,0 +1,7 @@
+sns:
+  baseDir: /Users/gutaegyun/code/sns-server/images/
+
+spring:
+  profiles:
+    include:
+      - aws

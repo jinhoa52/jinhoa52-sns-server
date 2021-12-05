@@ -1,5 +1,6 @@
 package me.koobin.snsserver.controller;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -18,7 +19,9 @@ import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.model.User;
 import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserPasswordUpdateParam;
+import me.koobin.snsserver.model.UserSignUpParam;
 import me.koobin.snsserver.model.UserUpdateParam;
+import me.koobin.snsserver.service.FileIOService;
 import me.koobin.snsserver.service.LoginService;
 import me.koobin.snsserver.service.UserService;
 import me.koobin.snsserver.util.PasswordEncryptor;
@@ -31,7 +34,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @WebMvcTest(UserController.class)
 class UserControllerTest {
@@ -43,6 +49,9 @@ class UserControllerTest {
 
   @MockBean
   UserService userService;
+
+  @MockBean
+  FileIOService fileIOService;
 
   @MockBean
   LoginService loginService;
@@ -86,7 +95,7 @@ class UserControllerTest {
 
   @Test
   void signup_success() throws Exception {
-    when(userService.signUp(any(User.class))).thenReturn(true);
+    when(userService.signUp(any(UserSignUpParam.class))).thenReturn(true);
 
     mockMvc.perform(post(baseUrl)
             .contentType(MediaType.APPLICATION_JSON)
@@ -97,7 +106,7 @@ class UserControllerTest {
 
   @Test
   void signup_fail_dupeUsername() throws Exception {
-    when(userService.signUp(any(User.class))).thenReturn(false);
+    when(userService.signUp(any(UserSignUpParam.class))).thenReturn(false);
 
     mockMvc.perform(post(baseUrl)
             .contentType(MediaType.APPLICATION_JSON)
@@ -115,7 +124,6 @@ class UserControllerTest {
         ).andDo(print())
         .andExpect(status().isOk())
         .andExpect(content().string("true"));
-    ;
 
     verify(userService).isUsernameDupe(testUser.getUsername());
   }
@@ -162,16 +170,30 @@ class UserControllerTest {
   @Test
   void updateUser() throws Exception {
     mockHttpSession.setAttribute(SessionKey.USER, encryptedTestUser);
+    MockMultipartFile mockFile = new MockMultipartFile(
+        "profileImage",
+        "profileImage",
+        "image/png",
+        "profileImage".getBytes());
     UserUpdateParam userUpdateParam =
-        new UserUpdateParam("updateName", "010-2222-2222", "update@email.com");
+        new UserUpdateParam("updateName", "010-2222-2222", "update@email.com", "message");
 
-    mockMvc.perform(put(baseUrl + "/profile")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(userUpdateParam))
+    MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(
+        "/users/profile");
+    builder.with(request -> {
+      request.setMethod("PUT");
+      return request;
+    });
+
+    mockMvc.perform(builder
+            .file(mockFile)
             .session(mockHttpSession)
-        ).andDo(print())
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .content(mapper.writeValueAsString(userUpdateParam)))
+        .andDo(print())
         .andExpect(status().isOk());
-    verify(userService).updateUser(any(String.class), any(UserUpdateParam.class));
+
+    verify(userService).updateUser(eq(encryptedTestUser), any(UserUpdateParam.class), eq(mockFile));
   }
 
   @Test
@@ -207,7 +229,6 @@ class UserControllerTest {
             .session(mockHttpSession)
         ).andDo(print())
         .andExpect(status().isConflict());
-
 
     verify(userService).updateUserPassword(any(User.class), any(UserPasswordUpdateParam.class));
     verify(loginService, never()).logoutUser();

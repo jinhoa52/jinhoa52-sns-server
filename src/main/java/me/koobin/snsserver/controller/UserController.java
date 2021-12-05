@@ -1,19 +1,22 @@
 package me.koobin.snsserver.controller;
 
 
-import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.annotation.CheckLogin;
 import me.koobin.snsserver.annotation.CurrentUser;
+import me.koobin.snsserver.exception.FileIoException;
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.model.User;
 import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserPassword;
 import me.koobin.snsserver.model.UserPasswordUpdateParam;
+import me.koobin.snsserver.model.UserSignUpParam;
+import me.koobin.snsserver.model.UserUpdateInfo;
 import me.koobin.snsserver.model.UserUpdateParam;
 import me.koobin.snsserver.service.LoginService;
 import me.koobin.snsserver.service.UserService;
 import me.koobin.snsserver.util.ResponsesEntities;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +25,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -34,8 +38,8 @@ public class UserController {
   private final LoginService loginService;
 
   @PostMapping
-  public ResponseEntity<Void> signup(@RequestBody User user) {
-    boolean result = userService.signUp(user);
+  public ResponseEntity<Void> signup(@RequestBody UserSignUpParam userSignUpParam) {
+    boolean result = userService.signUp(userSignUpParam);
     return result ? ResponsesEntities.RESPONSE_CREATED : ResponsesEntities.RESPONSE_CONFLICT;
   }
 
@@ -64,10 +68,18 @@ public class UserController {
 
   @PutMapping("/profile")
   @CheckLogin
-  public ResponseEntity<Void> updateUser(
-      @RequestBody UserUpdateParam userUpdateParam, @CurrentUser User currentUser) {
+  public ResponseEntity updateUser(
+      UserUpdateParam userUpdateParam, @CurrentUser User currentUser
+      , @RequestPart("profileImage") MultipartFile profile) {
+    // profile 삭제 시 프로필 제거
 
-    userService.updateUser(currentUser.getUsername(), userUpdateParam);
+    try {
+      UserUpdateInfo userUpdateInfo = userService.updateUser(currentUser, userUpdateParam, profile);
+      loginService.updateUserInfo(currentUser, userUpdateInfo);
+    } catch (FileIoException e) {
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     return ResponsesEntities.RESPONSE_OK;
   }
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="me.koobin.snsserver.mapper.FileMapper">
+
+  <insert id="insertFile" parameterType="me.koobin.snsserver.model.FileInfo"
+    useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into file (file_name, save_file_name, content_type)
+    VALUES (#{fileName}, #{saveFileName}, #{contentType})
+  </insert>
+
+  <delete id="deleteFile" parameterType="long">
+    UPDATE FILE
+    SET DELETE_FLAG = 1,
+        modify_date = now()
+    WHERE ID = #{id}
+  </delete>
+
+  <select id="findById" resultType="me.koobin.snsserver.model.FileInfo" parameterType="long">
+    select *
+    from file
+    where id = #{id}
+  </select>
+</mapper>
