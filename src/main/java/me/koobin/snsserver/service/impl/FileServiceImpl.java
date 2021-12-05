@@ -3,8 +3,8 @@ package me.koobin.snsserver.service.impl;
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.mapper.FileMapper;
 import me.koobin.snsserver.model.FileInfo;
+import me.koobin.snsserver.service.FileIOService;
 import me.koobin.snsserver.service.FileService;
-import me.koobin.snsserver.service.FileUploadService;
 import me.koobin.snsserver.util.FileUpload;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -19,8 +19,8 @@ public class FileServiceImpl implements FileService {
 
   private final FileMapper fileMapper;
 
-  @Qualifier("s3FileUploadService")
-  private final FileUploadService fileUploadService;
+  @Qualifier("s3FileIOService")
+  private final FileIOService fileIOService;
 
   @Override
   public Long saveFile(MultipartFile multipartFile)  {
@@ -33,7 +33,7 @@ public class FileServiceImpl implements FileService {
         .contentType(multipartFile.getContentType())
         .build();
 
-    fileUploadService.uploadFile(multipartFile, saveFileName);
+    fileIOService.uploadFile(multipartFile, saveFileName);
     fileMapper.insertFile(fileInfo);
     return fileInfo.getId();
   }
@@ -41,7 +41,7 @@ public class FileServiceImpl implements FileService {
   @Override
   public void deleteFile(Long id) {
     FileInfo file = fileMapper.findById(id);
-    fileUploadService.deleteFile(file.getSaveFileName());
+    fileIOService.deleteFile(file.getSaveFileName());
     fileMapper.deleteFile(id);
   }
 }

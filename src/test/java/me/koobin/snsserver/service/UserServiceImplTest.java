@@ -16,7 +16,6 @@ import me.koobin.snsserver.model.UserUpdateInfo;
 import me.koobin.snsserver.model.UserUpdateParam;
 import me.koobin.snsserver.service.impl.UserServiceImpl;
 import me.koobin.snsserver.util.PasswordEncryptor;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

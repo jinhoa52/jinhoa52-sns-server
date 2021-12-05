@@ -21,7 +21,7 @@ import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserSignUpParam;
 import me.koobin.snsserver.model.UserUpdateParam;
-import me.koobin.snsserver.service.FileUploadService;
+import me.koobin.snsserver.service.FileIOService;
 import me.koobin.snsserver.service.LoginService;
 import me.koobin.snsserver.service.UserService;
 import me.koobin.snsserver.util.PasswordEncryptor;
@@ -51,7 +51,7 @@ class UserControllerTest {
   UserService userService;
 
   @MockBean
-  FileUploadService fileUploadService;
+  FileIOService fileIOService;
 
   @MockBean
   LoginService loginService;

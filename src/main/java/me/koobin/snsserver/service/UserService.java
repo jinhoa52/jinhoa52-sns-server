@@ -1,6 +1,5 @@
 package me.koobin.snsserver.service;
 
-import me.koobin.snsserver.exception.FileIoException;
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.model.User;
 import me.koobin.snsserver.model.UserIdAndPassword;

@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import me.koobin.snsserver.exception.FileIoException;
-import me.koobin.snsserver.service.FileUploadService;
+import me.koobin.snsserver.service.FileIOService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.multipart.MultipartFile;
 
 @PropertySource("classpath:application.yml")
-public class LocalFileUploadService implements FileUploadService {
+public class LocalFileIOService implements FileIOService {
 
   // 맥북 기준
   @Value("${sns.baseDir}")

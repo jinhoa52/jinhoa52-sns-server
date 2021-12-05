@@ -11,14 +11,14 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.exception.FileIoException;
-import me.koobin.snsserver.service.FileUploadService;
+import me.koobin.snsserver.service.FileIOService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
 @RequiredArgsConstructor
-public class S3FileUploadService implements FileUploadService {
+public class S3FileIOService implements FileIOService {
 
   private final AmazonS3Client amazonS3Client;
 

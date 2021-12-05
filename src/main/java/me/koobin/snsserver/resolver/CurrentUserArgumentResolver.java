@@ -20,7 +20,7 @@ public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolve
 
   @Override
   public User resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-      NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+      NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
     HttpServletRequest servletRequest = (HttpServletRequest) webRequest.getNativeRequest();
     HttpSession httpSession = servletRequest.getSession();
 
