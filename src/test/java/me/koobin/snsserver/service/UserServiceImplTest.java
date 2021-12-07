@@ -5,7 +5,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import me.koobin.snsserver.exception.FileIoException;
+import me.koobin.snsserver.exception.FileException;
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.mapper.UserMapper;
 import me.koobin.snsserver.model.User;
@@ -35,7 +35,7 @@ class UserServiceImplTest {
   UserServiceImpl userService;
 
   @Mock
-  FileService fileService;
+  FileInfoService fileInfoService;
 
   User testUser;
   User isNullProfileIdEncryptedTestUser;
@@ -162,14 +162,14 @@ class UserServiceImplTest {
         new UserUpdateParam("update_name", "010-1111-2222", "update@email.com", "message");
     MockMultipartFile mockFile = new MockMultipartFile("profileImage", "orig", null, "bar".getBytes());
 
-    when(fileService.saveFile(mockFile)).thenReturn(1L);
+    when(fileInfoService.saveFile(mockFile)).thenReturn(1L);
 
 
     Assertions.assertDoesNotThrow(() -> userService.updateUser(isNullProfileIdEncryptedTestUser, userUpdateParam, mockFile));
 
     verify(userMapper).updateUser(any(UserUpdateInfo.class));
-    verify(fileService).saveFile(mockFile);
-    verify(fileService, never()).deleteFile(any(Long.class));
+    verify(fileInfoService).saveFile(mockFile);
+    verify(fileInfoService, never()).deleteFile(any(Long.class));
   }
 
   @Test
@@ -178,14 +178,14 @@ class UserServiceImplTest {
         new UserUpdateParam("update_name", "010-1111-2222", "update@email.com", "message");
     MockMultipartFile mockFile = new MockMultipartFile("profileImage", "orig", "image/png", "bar".getBytes());
 
-    when(fileService.saveFile(mockFile)).thenReturn(1L);
+    when(fileInfoService.saveFile(mockFile)).thenReturn(1L);
 
 
     Assertions.assertDoesNotThrow(() -> userService.updateUser(encryptedTestUser, userUpdateParam, mockFile));
 
     verify(userMapper).updateUser(any(UserUpdateInfo.class));
-    verify(fileService).saveFile(mockFile);
-    verify(fileService).deleteFile(any(Long.class));
+    verify(fileInfoService).saveFile(mockFile);
+    verify(fileInfoService).deleteFile(any(Long.class));
   }
 
   @Test
@@ -194,15 +194,15 @@ class UserServiceImplTest {
         new UserUpdateParam("update_name", "010-1111-2222", "update@email.com", "message");
     MockMultipartFile mockFile = new MockMultipartFile("profileImage", "orig", "image/png", "bar".getBytes());
 
-    when(fileService.saveFile(mockFile)).thenThrow(FileIoException.class);
+    when(fileInfoService.saveFile(mockFile)).thenThrow(FileException.class);
 
-    Assertions.assertThrows(FileIoException.class, ()->{
+    Assertions.assertThrows(FileException.class, ()->{
       userService.updateUser(encryptedTestUser, userUpdateParam, mockFile);
     });
 
     verify(userMapper, never()).updateUser(any(UserUpdateInfo.class));
-    verify(fileService).saveFile(mockFile);
-    verify(fileService).deleteFile(any(Long.class));
+    verify(fileInfoService).saveFile(mockFile);
+    verify(fileInfoService).deleteFile(any(Long.class));
   }
 
   @Test

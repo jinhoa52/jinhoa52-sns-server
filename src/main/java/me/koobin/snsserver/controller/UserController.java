@@ -4,7 +4,7 @@ package me.koobin.snsserver.controller;
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.annotation.CheckLogin;
 import me.koobin.snsserver.annotation.CurrentUser;
-import me.koobin.snsserver.exception.FileIoException;
+import me.koobin.snsserver.exception.FileException;
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.model.User;
 import me.koobin.snsserver.model.UserIdAndPassword;
@@ -76,7 +76,7 @@ public class UserController {
     try {
       UserUpdateInfo userUpdateInfo = userService.updateUser(currentUser, userUpdateParam, profile);
       loginService.updateUserInfo(currentUser, userUpdateInfo);
-    } catch (FileIoException e) {
+    } catch (FileException e) {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

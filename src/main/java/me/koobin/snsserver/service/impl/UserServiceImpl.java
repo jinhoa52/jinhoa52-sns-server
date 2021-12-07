@@ -9,7 +9,7 @@ import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserSignUpParam;
 import me.koobin.snsserver.model.UserUpdateInfo;
 import me.koobin.snsserver.model.UserUpdateParam;
-import me.koobin.snsserver.service.FileService;
+import me.koobin.snsserver.service.FileInfoService;
 import me.koobin.snsserver.service.UserService;
 import me.koobin.snsserver.util.PasswordEncryptor;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
   private final UserMapper userMapper;
 
-  private final FileService fileService;
+  private final FileInfoService fileInfoService;
 
   @Override
   public boolean signUp(UserSignUpParam userSignUpParam) {
@@ -79,13 +79,13 @@ public class UserServiceImpl implements UserService {
 
     // 기존 프로필 삭제 작업
     if (currentUser.getProfileId() != null) {
-      fileService.deleteFile(currentUser.getProfileId());
+      fileInfoService.deleteFile(currentUser.getProfileId());
     }
 
     Long fileId = null;
     if (!profile.isEmpty()) {
       // 새로운 프로필 저장
-      fileId = fileService.saveFile(profile);
+      fileId = fileInfoService.saveFile(profile);
     }
 
     // 회원 정보 수정
