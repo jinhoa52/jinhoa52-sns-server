@@ -4,7 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService {
 
-  Long saveFile(MultipartFile multipartFile);
+  void deleteFile(String saveFileName);
 
-  void deleteFile(Long id);
+  void uploadFile(MultipartFile multipartFile, String saveFileName);
 }
