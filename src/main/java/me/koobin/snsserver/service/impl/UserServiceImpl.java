@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.mapper.UserMapper;
 import me.koobin.snsserver.model.User;
-import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserSignUpParam;
 import me.koobin.snsserver.model.UserUpdateInfo;
 import me.koobin.snsserver.model.UserUpdateParam;
+import me.koobin.snsserver.model.UsernameAndPw;
 import me.koobin.snsserver.service.FileInfoService;
 import me.koobin.snsserver.service.UserService;
-import me.koobin.snsserver.util.PasswordEncryptor;
+import me.koobin.snsserver.util.PwEncryptor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,19 +39,6 @@ public class UserServiceImpl implements UserService {
     }
     insertUser(userSignUpParam);
     return true;
-
-  }
-
-  private void insertUser(UserSignUpParam userSignUpParam) {
-    String encodedPassword = PasswordEncryptor.encrypt(userSignUpParam.getPassword());
-    UserSignUpParam encryptedUser = UserSignUpParam.builder()
-        .username(userSignUpParam.getUsername())
-        .password(encodedPassword)
-        .email(userSignUpParam.getEmail())
-        .phoneNumber(userSignUpParam.getPhoneNumber())
-        .name(userSignUpParam.getName())
-        .build();
-    userMapper.insertUser(encryptedUser);
   }
 
   @Override
@@ -60,31 +47,45 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User getLoginUser(UserIdAndPassword userIdAndPassword) {
-    String encodedPassword = userMapper.getPassword(userIdAndPassword.getUsername());
-    boolean match = PasswordEncryptor.isMatch(userIdAndPassword.getPassword(), encodedPassword);
-    if (encodedPassword == null || !match) {
-      return null;
-    }
+  public User getLoginUser(UsernameAndPw usernameAndPw) {
+    String username = usernameAndPw.getUsername();
 
-    UserIdAndPassword encodedUserIdAndPassword = new UserIdAndPassword(
-        userIdAndPassword.getUsername(),
-        encodedPassword);
+    String encodedPw = userMapper.getPw(username);
+    if (encodedPw == null)return null;
 
-    return userMapper.getUser(encodedUserIdAndPassword);
+    boolean match = PwEncryptor.isMatch(usernameAndPw.getPw(), encodedPw);
+    if (!match) return null;
+
+    UsernameAndPw encodedUsernameAndPw = new UsernameAndPw(
+        username,
+        encodedPw);
+
+    return userMapper.findByUsernameAndPw(encodedUsernameAndPw);
+  }
+
+  private void insertUser(UserSignUpParam userSignUpParam) {
+    String encodedPw = PwEncryptor.encrypt(userSignUpParam.getPassword());
+    UserSignUpParam encryptedUser = UserSignUpParam.builder()
+        .username(userSignUpParam.getUsername())
+        .password(encodedPw)
+        .email(userSignUpParam.getEmail())
+        .phoneNumber(userSignUpParam.getPhoneNumber())
+        .name(userSignUpParam.getName())
+        .build();
+    userMapper.insertUser(encryptedUser);
   }
 
   @Override
-  public UserUpdateInfo updateUser(User currentUser, UserUpdateParam userUpdateParam, MultipartFile profile){
+  public void updateUser(User currentUser, UserUpdateParam userUpdateParam, MultipartFile profile) {
 
-    // 기존 프로필 삭제 작업
+    // 기존 프로필 이미지 삭제
     if (currentUser.getProfileId() != null) {
       fileInfoService.deleteFile(currentUser.getProfileId());
     }
 
     Long fileId = null;
+    // 새로운 프로필 저장
     if (!profile.isEmpty()) {
-      // 새로운 프로필 저장
       fileId = fileInfoService.saveFile(profile);
     }
 
@@ -98,9 +99,7 @@ public class UserServiceImpl implements UserService {
         .profileId(fileId)
         .build();
 
-    userMapper.updateUser(userUpdateInfo);
-    return userUpdateInfo;
-
+    userMapper.updateProfileInfo(userUpdateInfo);
   }
 
   @Override
@@ -109,7 +108,7 @@ public class UserServiceImpl implements UserService {
 
     String currentUserPassword = currentUser.getPassword();
     String currentPassword = userPasswordUpdateParam.getCurrentPassword();
-    boolean isValidPassword = PasswordEncryptor.isMatch(currentPassword, currentUserPassword);
+    boolean isValidPassword = PwEncryptor.isMatch(currentPassword, currentUserPassword);
 
     String newPassword = userPasswordUpdateParam.getNewPassword();
     String checkNewPassword = userPasswordUpdateParam.getCheckNewPassword();
@@ -120,23 +119,24 @@ public class UserServiceImpl implements UserService {
       throw new InValidValueException("올바르지 않은 값입니다. 다시 입력해주세요.");
     }
 
-    String encryptedPassword = PasswordEncryptor.encrypt(userPasswordUpdateParam.getNewPassword());
+    String encryptedPassword = PwEncryptor.encrypt(userPasswordUpdateParam.getNewPassword());
     String currentUsername = currentUser.getUsername();
-    UserIdAndPassword userIdAndPassword = new UserIdAndPassword(currentUsername, encryptedPassword);
+    UsernameAndPw usernameAndPw = new UsernameAndPw(currentUsername,
+        encryptedPassword);
 
-    userMapper.updateUserPassword(userIdAndPassword);
+    userMapper.updatePassword(usernameAndPw);
 
   }
 
   @Override
   public void deleteUser(User currentUser, String currentPassword) throws InValidValueException {
-    boolean isMatch = PasswordEncryptor.isMatch(currentPassword, currentUser.getPassword());
+    boolean isMatch = PwEncryptor.isMatch(currentPassword, currentUser.getPassword());
 
     if (!isMatch) {
       throw new InValidValueException();
     }
 
-    userMapper.deleteUser(currentUser.getUsername());
+    userMapper.deleteByUsername(currentUser.getUsername());
 
   }
 }

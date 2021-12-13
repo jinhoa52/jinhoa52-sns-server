@@ -12,7 +12,7 @@ public class LoginErrorHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(LoginException.class)
   public final ResponseEntity<Void> userFoundException (){
-    return ResponsesEntities.RESPONSE_UNAUTHORIZED;
+    return ResponsesEntities.UNAUTHORIZED;
 
   }
 

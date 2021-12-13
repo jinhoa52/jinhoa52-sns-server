@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class UserIdAndPassword {
+public class UsernameAndPw {
   private final String username;
-  private final String password;
+  private final String pw;
 
 }
