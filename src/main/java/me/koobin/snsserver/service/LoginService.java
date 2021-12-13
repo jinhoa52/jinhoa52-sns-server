@@ -1,7 +1,6 @@
 package me.koobin.snsserver.service;
 
 import me.koobin.snsserver.model.User;
-import me.koobin.snsserver.model.UserUpdateInfo;
 
 public interface LoginService {
 
@@ -9,5 +8,6 @@ public interface LoginService {
 
   void logoutUser();
 
-  void updateUserInfo(User user, UserUpdateInfo userUpdateInfo);
+
+  Long getCurrentUserId();
 }

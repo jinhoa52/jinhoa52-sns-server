@@ -2,9 +2,9 @@ package me.koobin.snsserver.util;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-public class PasswordEncryptor {
+public class PwEncryptor {
 
-  private PasswordEncryptor() {
+  private PwEncryptor() {
     throw new IllegalStateException("Utility class");
   }
 

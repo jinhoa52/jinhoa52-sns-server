@@ -9,12 +9,12 @@ public class ResponsesEntities {
     throw new IllegalStateException("Utility class");
   }
 
-  public static final ResponseEntity<Void> RESPONSE_OK = new ResponseEntity<>(HttpStatus.OK);
-  public static final ResponseEntity<Void> RESPONSE_CREATED = new ResponseEntity<>(
+  public static final ResponseEntity<Void> OK = new ResponseEntity<>(HttpStatus.OK);
+  public static final ResponseEntity<Void> CREATED = new ResponseEntity<>(
       HttpStatus.CREATED);
-  public static final ResponseEntity<Void> RESPONSE_CONFLICT = new ResponseEntity<>(
+  public static final ResponseEntity<Void> CONFLICT = new ResponseEntity<>(
       HttpStatus.CONFLICT);
-  public static final ResponseEntity<Void> RESPONSE_UNAUTHORIZED = new ResponseEntity<>(
+  public static final ResponseEntity<Void> UNAUTHORIZED = new ResponseEntity<>(
       HttpStatus.UNAUTHORIZED);
 
 }

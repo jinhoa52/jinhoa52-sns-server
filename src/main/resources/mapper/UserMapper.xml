@@ -9,7 +9,7 @@
     VALUES (#{username}, #{password}, #{phoneNumber}, #{email}, #{name})
   </insert>
 
-  <update id="updateUser" parameterType="me.koobin.snsserver.model.UserUpdateInfo" >
+  <update id="updateProfileInfo" parameterType="me.koobin.snsserver.model.UserUpdateInfo">
     UPDATE user
     SET NAME            = #{name},
         PHONE_NUMBER    = #{phoneNumber},
@@ -19,13 +19,13 @@
     WHERE USERNAME = #{username}
   </update>
 
-  <update id="updateUserPassword" parameterType="me.koobin.snsserver.model.UserIdAndPassword">
+  <update id="updatePassword" parameterType="me.koobin.snsserver.model.UsernameAndPw">
     UPDATE user
     SET PASSWORD = #{password}
     WHERE USERNAME = #{username}
   </update>
 
-  <delete id="deleteUser" parameterType="string">
+  <delete id="deleteByUsername" parameterType="string">
     DELETE
     FROM USER
     WHERE USERNAME = #{username}
@@ -35,14 +35,14 @@
     SELECT EXISTS(SELECT USERNAME FROM USER WHERE USERNAME = #{username})
   </select>
 
-  <select id="getPassword" parameterType="string" resultType="java.lang.String">
+  <select id="getPw" parameterType="string" resultType="java.lang.String">
     SELECT PASSWORD
     FROM USER
     WHERE USERNAME = #{username}
   </select>
 
-  <select id="getUser" resultType="me.koobin.snsserver.model.User"
-    parameterType="me.koobin.snsserver.model.UserIdAndPassword">
+  <select id="findByUsernameAndPw" resultType="me.koobin.snsserver.model.User"
+    parameterType="me.koobin.snsserver.model.UsernameAndPw">
     SELECT ID,
            PASSWORD,
            NAME,
@@ -53,7 +53,20 @@
            profile_id
     FROM USER
     WHERE USERNAME = #{username}
-      AND PASSWORD = #{password}
+      AND PASSWORD = #{pw}
+  </select>
+  <select id="findByUserId" resultType="me.koobin.snsserver.model.User"
+    parameterType="long">
+    SELECT ID,
+           PASSWORD,
+           NAME,
+           PHONE_NUMBER,
+           EMAIL,
+           USERNAME,
+           PROFILE_MESSAGE,
+           profile_id
+    FROM USER
+    WHERE id = #{id}
   </select>
 
 </mapper>

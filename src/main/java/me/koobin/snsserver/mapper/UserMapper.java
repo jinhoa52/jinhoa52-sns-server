@@ -1,9 +1,9 @@
 package me.koobin.snsserver.mapper;
 
 import me.koobin.snsserver.model.User;
-import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserSignUpParam;
 import me.koobin.snsserver.model.UserUpdateInfo;
+import me.koobin.snsserver.model.UsernameAndPw;
 import org.apache.ibatis.annotations.Mapper;
 
 /*
@@ -17,13 +17,16 @@ public interface UserMapper {
 
   boolean isUsernameDupe(String username);
 
-  String getPassword(String username);
+  String getPw(String username);
 
-  User getUser(UserIdAndPassword userIdAndPassword);
+  User findByUsernameAndPw(UsernameAndPw usernameAndPw);
 
-  void updateUser(UserUpdateInfo userUpdateInfo);
+  User findByUserId(Long userId);
 
-  void updateUserPassword(UserIdAndPassword userIdAndPassword);
+  void updateProfileInfo(UserUpdateInfo userUpdateInfo);
 
-  void deleteUser(String username);
+  void updatePassword(UsernameAndPw usernameAndPw);
+
+  void deleteByUsername(String username);
+
 }

@@ -2,6 +2,11 @@ sns:
   baseDir: /Users/gutaegyun/code/sns-server/images/
 
 spring:
+  session:
+    store-type: redis
+  redis:
+    host: localhost
+    port: 6379
   profiles:
     include:
       - aws

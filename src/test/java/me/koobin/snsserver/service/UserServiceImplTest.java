@@ -9,13 +9,13 @@ import me.koobin.snsserver.exception.FileException;
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.mapper.UserMapper;
 import me.koobin.snsserver.model.User;
-import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserSignUpParam;
 import me.koobin.snsserver.model.UserUpdateInfo;
 import me.koobin.snsserver.model.UserUpdateParam;
+import me.koobin.snsserver.model.UsernameAndPw;
 import me.koobin.snsserver.service.impl.UserServiceImpl;
-import me.koobin.snsserver.util.PasswordEncryptor;
+import me.koobin.snsserver.util.PwEncryptor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ class UserServiceImplTest {
 
     encryptedTestUser = User.builder()
         .username("id")
-        .password(PasswordEncryptor.encrypt("password"))
+        .password(PwEncryptor.encrypt("password"))
         .email("email@email.com")
         .phoneNumber("010-0000-0000")
         .name("test1")
@@ -132,28 +132,28 @@ class UserServiceImplTest {
   @Test
   void getLoginUser_success() {
 
-    UserIdAndPassword userIdAndPassword = new UserIdAndPassword(testUser.getUsername(), testUser.getPassword());
-    when(userMapper.getPassword(userIdAndPassword.getUsername())).thenReturn(encryptedTestUser.getPassword());
-    when(userMapper.getUser(any(UserIdAndPassword.class))).thenReturn(encryptedTestUser);
+    UsernameAndPw usernameAndPw = new UsernameAndPw(testUser.getUsername(), testUser.getPassword());
+    when(userMapper.getPw(usernameAndPw.getUsername())).thenReturn(encryptedTestUser.getPassword());
+    when(userMapper.findByUsernameAndPw(any(UsernameAndPw.class))).thenReturn(encryptedTestUser);
 
-    User loginUser = userService.getLoginUser(userIdAndPassword);
+    User loginUser = userService.getLoginUser(usernameAndPw);
 
     Assertions.assertNotNull(loginUser);
     Assertions.assertEquals(testUser.getUsername(), loginUser.getUsername());
-    verify(userMapper).getPassword(userIdAndPassword.getUsername());
-    verify(userMapper).getUser(any(UserIdAndPassword.class));
+    verify(userMapper).getPw(usernameAndPw.getUsername());
+    verify(userMapper).findByUsernameAndPw(any(UsernameAndPw.class));
   }
 
   @Test
   void getLoginUser_fail() {
-    UserIdAndPassword userIdAndPassword = new UserIdAndPassword(testUser.getUsername(), "wrong");
-    when(userMapper.getPassword(userIdAndPassword.getUsername())).thenReturn(
+    UsernameAndPw usernameAndPw = new UsernameAndPw(testUser.getUsername(), "wrong");
+    when(userMapper.getPw(usernameAndPw.getUsername())).thenReturn(
         encryptedTestUser.getPassword());
 
-    User loginUser = userService.getLoginUser(userIdAndPassword);
+    User loginUser = userService.getLoginUser(usernameAndPw);
 
     Assertions.assertNull(loginUser);
-    verify(userMapper, never()).getUser(userIdAndPassword);
+    verify(userMapper, never()).findByUsernameAndPw(usernameAndPw);
   }
 
   @Test
@@ -167,7 +167,7 @@ class UserServiceImplTest {
 
     Assertions.assertDoesNotThrow(() -> userService.updateUser(isNullProfileIdEncryptedTestUser, userUpdateParam, mockFile));
 
-    verify(userMapper).updateUser(any(UserUpdateInfo.class));
+    verify(userMapper).updateProfileInfo(any(UserUpdateInfo.class));
     verify(fileInfoService).saveFile(mockFile);
     verify(fileInfoService, never()).deleteFile(any(Long.class));
   }
@@ -183,7 +183,7 @@ class UserServiceImplTest {
 
     Assertions.assertDoesNotThrow(() -> userService.updateUser(encryptedTestUser, userUpdateParam, mockFile));
 
-    verify(userMapper).updateUser(any(UserUpdateInfo.class));
+    verify(userMapper).updateProfileInfo(any(UserUpdateInfo.class));
     verify(fileInfoService).saveFile(mockFile);
     verify(fileInfoService).deleteFile(any(Long.class));
   }
@@ -200,7 +200,7 @@ class UserServiceImplTest {
       userService.updateUser(encryptedTestUser, userUpdateParam, mockFile);
     });
 
-    verify(userMapper, never()).updateUser(any(UserUpdateInfo.class));
+    verify(userMapper, never()).updateProfileInfo(any(UserUpdateInfo.class));
     verify(fileInfoService).saveFile(mockFile);
     verify(fileInfoService).deleteFile(any(Long.class));
   }
@@ -212,7 +212,7 @@ class UserServiceImplTest {
     Assertions.assertDoesNotThrow(() -> {
       userService.updateUserPassword(encryptedTestUser, userPasswordUpdateParam);
     });
-    verify(userMapper).updateUserPassword(any(UserIdAndPassword.class));
+    verify(userMapper).updatePassword(any(UsernameAndPw.class));
   }
 
   @Test
@@ -221,7 +221,7 @@ class UserServiceImplTest {
         new UserPasswordUpdateParam("wrong_password", "test", "test");
     Assertions.assertThrows(InValidValueException.class,
         () -> userService.updateUserPassword(encryptedTestUser, userPasswordUpdateParam));
-    verify(userMapper, never()).updateUserPassword(any(UserIdAndPassword.class));
+    verify(userMapper, never()).updatePassword(any(UsernameAndPw.class));
   }
 
   @Test
@@ -232,7 +232,7 @@ class UserServiceImplTest {
     Assertions.assertThrows(InValidValueException.class, () -> {
       userService.updateUserPassword(encryptedTestUser, userPasswordUpdateParam);
     });
-    verify(userMapper, never()).updateUserPassword(any(UserIdAndPassword.class));
+    verify(userMapper, never()).updatePassword(any(UsernameAndPw.class));
   }
 
   @Test
@@ -242,7 +242,7 @@ class UserServiceImplTest {
     Assertions.assertThrows(InValidValueException.class, () -> {
       userService.updateUserPassword(encryptedTestUser, userPasswordUpdateParam);
     });
-    verify(userMapper, never()).updateUserPassword(any(UserIdAndPassword.class));
+    verify(userMapper, never()).updatePassword(any(UsernameAndPw.class));
   }
 
   @Test
@@ -250,6 +250,6 @@ class UserServiceImplTest {
     Assertions.assertDoesNotThrow(() -> {
       userService.deleteUser(encryptedTestUser, testUser.getPassword());
     });
-    verify(userMapper).deleteUser(testUser.getUsername());
+    verify(userMapper).deleteByUsername(testUser.getUsername());
   }
 }

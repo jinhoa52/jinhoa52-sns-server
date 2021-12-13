@@ -1,6 +1,5 @@
 package me.koobin.snsserver.controller;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -17,33 +16,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.model.User;
-import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserSignUpParam;
 import me.koobin.snsserver.model.UserUpdateParam;
+import me.koobin.snsserver.model.UsernameAndPw;
+import me.koobin.snsserver.resolver.CurrentUserArgumentResolver;
 import me.koobin.snsserver.service.FileService;
 import me.koobin.snsserver.service.LoginService;
 import me.koobin.snsserver.service.UserService;
-import me.koobin.snsserver.util.PasswordEncryptor;
-import me.koobin.snsserver.util.SessionKey;
+import me.koobin.snsserver.util.PwEncryptor;
+import me.koobin.snsserver.util.SessionKeys;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @WebMvcTest(UserController.class)
+@ExtendWith(SpringExtension.class)
 class UserControllerTest {
 
   @Autowired
   MockMvc mockMvc;
+  @MockBean
+  CurrentUserArgumentResolver currentUserArgumentResolver;
 
   static MockHttpSession mockHttpSession;
 
@@ -83,7 +88,7 @@ class UserControllerTest {
 
     encryptedTestUser = User.builder()
         .username("id")
-        .password(PasswordEncryptor.encrypt("password"))
+        .password(PwEncryptor.encrypt("password"))
         .email("email@email.com")
         .phoneNumber("010-0000-0000")
         .name("test1")
@@ -117,7 +122,6 @@ class UserControllerTest {
 
   @Test
   void checkUsernameDupe_Dupe() throws Exception {
-
     when(userService.isUsernameDupe(testUser.getUsername())).thenReturn(true);
 
     mockMvc.perform(get(baseUrl + '/' + testUser.getUsername() + "/exists")
@@ -130,7 +134,6 @@ class UserControllerTest {
 
   @Test
   void checkUsernameDupe_NotDupe() throws Exception {
-
     when(userService.isUsernameDupe(testUser.getUsername())).thenReturn(false);
 
     mockMvc.perform(get(baseUrl + '/' + testUser.getUsername() + "/exists")
@@ -143,18 +146,18 @@ class UserControllerTest {
 
   @Test
   void login() throws Exception {
-    UserIdAndPassword userIdAndPassword =
-        new UserIdAndPassword(testUser.getUsername(), testUser.getPassword());
+    UsernameAndPw usernameAndPw =
+        new UsernameAndPw(testUser.getUsername(), testUser.getPassword());
 
-    when(userService.getLoginUser(any(UserIdAndPassword.class))).thenReturn(encryptedTestUser);
+    when(userService.getLoginUser(any(UsernameAndPw.class))).thenReturn(encryptedTestUser);
 
     mockMvc.perform(post(baseUrl + "/login")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(userIdAndPassword))
+            .content(mapper.writeValueAsString(usernameAndPw))
         ).andDo(print())
         .andExpect(status().isOk());
 
-    verify(userService).getLoginUser(any(UserIdAndPassword.class));
+    verify(userService).getLoginUser(any(UsernameAndPw.class));
     verify(loginService).loginUser(encryptedTestUser);
   }
 
@@ -169,7 +172,7 @@ class UserControllerTest {
 
   @Test
   void updateUser() throws Exception {
-    mockHttpSession.setAttribute(SessionKey.USER, encryptedTestUser);
+    mockHttpSession.setAttribute(SessionKeys.USER_ID, encryptedTestUser.getId());
     MockMultipartFile mockFile = new MockMultipartFile(
         "profileImage",
         "profileImage",
@@ -193,12 +196,12 @@ class UserControllerTest {
         .andDo(print())
         .andExpect(status().isOk());
 
-    verify(userService).updateUser(eq(encryptedTestUser), any(UserUpdateParam.class), eq(mockFile));
+    verify(userService).updateUser(any(User.class), any(UserUpdateParam.class), any(MockMultipartFile.class));
   }
 
   @Test
   void updateUserPassword_success() throws Exception {
-    mockHttpSession.setAttribute(SessionKey.USER, encryptedTestUser);
+    mockHttpSession.setAttribute(SessionKeys.USER_ID, encryptedTestUser.getId());
     UserPasswordUpdateParam userPasswordUpdateParam
         = new UserPasswordUpdateParam(encryptedTestUser.getPassword(), "update", "update");
 
@@ -215,10 +218,9 @@ class UserControllerTest {
 
   @Test
   void updateUserPassword_fail_throwInValidValue() throws Exception {
-    mockHttpSession.setAttribute(SessionKey.USER, encryptedTestUser);
+    mockHttpSession.setAttribute(SessionKeys.USER_ID, encryptedTestUser);
     UserPasswordUpdateParam userPasswordUpdateParam
         = new UserPasswordUpdateParam(encryptedTestUser.getPassword(), "new", "check");
-
     doThrow(InValidValueException.class)
         .when(userService)
         .updateUserPassword(any(User.class), any(UserPasswordUpdateParam.class));
@@ -236,8 +238,6 @@ class UserControllerTest {
 
   @Test
   void deleteUser() throws Exception {
-    mockHttpSession.setAttribute(SessionKey.USER, encryptedTestUser);
-
     mockMvc.perform(delete(baseUrl)
             .contentType(MediaType.APPLICATION_JSON)
             .content(mapper.writeValueAsString(testUser.getPassword()))

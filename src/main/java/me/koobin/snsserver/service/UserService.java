@@ -2,11 +2,10 @@ package me.koobin.snsserver.service;
 
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.model.User;
-import me.koobin.snsserver.model.UserIdAndPassword;
 import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserSignUpParam;
-import me.koobin.snsserver.model.UserUpdateInfo;
 import me.koobin.snsserver.model.UserUpdateParam;
+import me.koobin.snsserver.model.UsernameAndPw;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
@@ -15,9 +14,9 @@ public interface UserService {
 
   boolean isUsernameDupe(String username);
 
-  User getLoginUser(UserIdAndPassword userIdAndPassword);
+  User getLoginUser(UsernameAndPw usernameAndPw);
 
-  UserUpdateInfo updateUser(User currentUser, UserUpdateParam userUpdateParam, MultipartFile profile);
+  void updateUser(User currentUser, UserUpdateParam userUpdateParam, MultipartFile profile);
 
   void updateUserPassword(User currentUser, UserPasswordUpdateParam userPasswordUpdateParam)throws InValidValueException;
 
