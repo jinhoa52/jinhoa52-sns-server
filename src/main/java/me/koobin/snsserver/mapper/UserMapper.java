@@ -1,9 +1,9 @@
 package me.koobin.snsserver.mapper;
 
 import me.koobin.snsserver.model.User;
-import me.koobin.snsserver.model.UsernameAndPw;
 import me.koobin.snsserver.model.UserSignUpParam;
 import me.koobin.snsserver.model.UserUpdateInfo;
+import me.koobin.snsserver.model.UsernameAndPw;
 import org.apache.ibatis.annotations.Mapper;
 
 /*

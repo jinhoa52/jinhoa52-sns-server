@@ -1,13 +1,9 @@
 package me.koobin.snsserver.resolver;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.annotation.CurrentUser;
 import me.koobin.snsserver.mapper.UserMapper;
-import me.koobin.snsserver.model.User;
 import me.koobin.snsserver.service.LoginService;
-import me.koobin.snsserver.util.SessionKeys;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;

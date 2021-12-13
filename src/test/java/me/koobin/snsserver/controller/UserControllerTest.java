@@ -1,6 +1,5 @@
 package me.koobin.snsserver.controller;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -17,10 +16,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.koobin.snsserver.exception.InValidValueException;
 import me.koobin.snsserver.model.User;
-import me.koobin.snsserver.model.UsernameAndPw;
 import me.koobin.snsserver.model.UserPasswordUpdateParam;
 import me.koobin.snsserver.model.UserSignUpParam;
 import me.koobin.snsserver.model.UserUpdateParam;
+import me.koobin.snsserver.model.UsernameAndPw;
 import me.koobin.snsserver.resolver.CurrentUserArgumentResolver;
 import me.koobin.snsserver.service.FileService;
 import me.koobin.snsserver.service.LoginService;
@@ -48,7 +47,8 @@ class UserControllerTest {
 
   @Autowired
   MockMvc mockMvc;
-  
+  @MockBean
+  CurrentUserArgumentResolver currentUserArgumentResolver;
 
   static MockHttpSession mockHttpSession;
 
