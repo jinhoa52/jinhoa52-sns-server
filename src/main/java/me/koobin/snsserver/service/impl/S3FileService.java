@@ -2,7 +2,9 @@ package me.koobin.snsserver.service.impl;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import me.koobin.snsserver.model.FileUploadInfo;
 import me.koobin.snsserver.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -30,8 +32,9 @@ public class S3FileService implements FileService {
   }
 
   @Override
-  public void uploadFile(MultipartFile multipartFile, String saveFileName) {
-
+  public void uploadFile(FileUploadInfo fileUploadInfo) {
+    String saveFileName = fileUploadInfo.getSaveFileName();
+    MultipartFile multipartFile = fileUploadInfo.getMultipartFile();
     try {
       PutObjectRequest putObjectRequest = PutObjectRequest
           .builder()
@@ -44,6 +47,10 @@ public class S3FileService implements FileService {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
 
+  @Override
+  public void uploadFiles(List<FileUploadInfo> fileUploadInfos) {
+    fileUploadInfos.forEach(this::uploadFile);
   }
 }

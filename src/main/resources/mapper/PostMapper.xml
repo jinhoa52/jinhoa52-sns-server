@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.koobin.snsserver.mapper.PostMapper">
+
+
+  <insert id="post" parameterType="me.koobin.snsserver.model.PostInfo" useGeneratedKeys="true"
+    keyProperty="id">
+    INSERT INTO post
+    ( content
+    , user_id)
+    VALUES ( #{content}
+           , #{userId});
+
+  </insert>
+  <insert id="savePostImage">
+    insert into post_file
+      (post_id
+      , file_id)
+    values
+           <foreach collection="fileIds" separator="," item="fileId">
+           ( #{postId}
+           , #{fileId} )
+           </foreach>
+  </insert>
+</mapper>
