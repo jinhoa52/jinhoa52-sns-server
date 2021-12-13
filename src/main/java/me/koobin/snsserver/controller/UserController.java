@@ -6,15 +6,15 @@ import me.koobin.snsserver.annotation.CheckLogin;
 import me.koobin.snsserver.annotation.CurrentUser;
 import me.koobin.snsserver.exception.FileException;
 import me.koobin.snsserver.exception.InValidValueException;
-import me.koobin.snsserver.model.User;
-import me.koobin.snsserver.model.UserPassword;
-import me.koobin.snsserver.model.UserPasswordUpdateParam;
-import me.koobin.snsserver.model.UserSignUpParam;
-import me.koobin.snsserver.model.UserUpdateParam;
-import me.koobin.snsserver.model.UsernameAndPw;
+import me.koobin.snsserver.model.user.User;
+import me.koobin.snsserver.model.user.UserPassword;
+import me.koobin.snsserver.model.user.UserPasswordUpdateParam;
+import me.koobin.snsserver.model.user.UserSignUpParam;
+import me.koobin.snsserver.model.user.UserUpdateParam;
+import me.koobin.snsserver.model.user.UsernameAndPw;
 import me.koobin.snsserver.service.LoginService;
 import me.koobin.snsserver.service.UserService;
-import me.koobin.snsserver.util.ResponsesEntities;
+import me.koobin.snsserver.util.ResponseEntities;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,7 +39,7 @@ public class UserController {
   @PostMapping
   public ResponseEntity<Void> signup(@RequestBody UserSignUpParam userSignUpParam) {
     boolean result = userService.signUp(userSignUpParam);
-    return result ? ResponsesEntities.CREATED : ResponsesEntities.CONFLICT;
+    return result ? ResponseEntities.CREATED : ResponseEntities.CONFLICT;
   }
 
   @GetMapping("{username}/exists")
@@ -51,18 +51,18 @@ public class UserController {
   public ResponseEntity<Void> login(@RequestBody UsernameAndPw usernameAndPw) {
     User user = userService.getLoginUser(usernameAndPw);
     if (user == null) {
-      return ResponsesEntities.UNAUTHORIZED;
+      return ResponseEntities.UNAUTHORIZED;
     }
 
     loginService.loginUser(user);
-    return ResponsesEntities.OK;
+    return ResponseEntities.OK;
 
   }
 
   @GetMapping("/logout")
   public ResponseEntity<Void> logout() {
     loginService.logoutUser();
-    return ResponsesEntities.OK;
+    return ResponseEntities.OK;
   }
 
   @PutMapping("/profile")
@@ -76,7 +76,7 @@ public class UserController {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    return ResponsesEntities.OK;
+    return ResponseEntities.OK;
   }
 
   @PutMapping("/profile/password")
@@ -88,10 +88,10 @@ public class UserController {
     try {
       userService.updateUserPassword(currentUser, userPasswordUpdateParam);
       loginService.logoutUser();
-      return ResponsesEntities.OK;
+      return ResponseEntities.OK;
 
     } catch (InValidValueException e) {
-      return ResponsesEntities.CONFLICT;
+      return ResponseEntities.CONFLICT;
 
     }
   }
@@ -103,9 +103,9 @@ public class UserController {
     try {
       userService.deleteUser(currentUser, userPassword.getCurrentPassword());
       loginService.logoutUser();
-      return ResponsesEntities.OK;
+      return ResponseEntities.OK;
     } catch (InValidValueException e) {
-      return ResponsesEntities.UNAUTHORIZED;
+      return ResponseEntities.UNAUTHORIZED;
     }
   }
 }

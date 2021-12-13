@@ -4,12 +4,12 @@
 
 <mapper namespace="me.koobin.snsserver.mapper.UserMapper">
 
-  <insert id="insertUser" parameterType="me.koobin.snsserver.model.UserSignUpParam">
+  <insert id="insertUser" parameterType="me.koobin.snsserver.model.user.UserSignUpParam">
     INSERT INTO USER (USERNAME, PASSWORD, PHONE_NUMBER, EMAIL, NAME)
     VALUES (#{username}, #{password}, #{phoneNumber}, #{email}, #{name})
   </insert>
 
-  <update id="updateProfileInfo" parameterType="me.koobin.snsserver.model.UserUpdateInfo">
+  <update id="updateProfileInfo" parameterType="me.koobin.snsserver.model.user.UserUpdateInfo">
     UPDATE user
     SET NAME            = #{name},
         PHONE_NUMBER    = #{phoneNumber},
@@ -19,7 +19,7 @@
     WHERE USERNAME = #{username}
   </update>
 
-  <update id="updatePassword" parameterType="me.koobin.snsserver.model.UsernameAndPw">
+  <update id="updatePassword" parameterType="me.koobin.snsserver.model.user.UsernameAndPw">
     UPDATE user
     SET PASSWORD = #{password}
     WHERE USERNAME = #{username}
@@ -41,8 +41,8 @@
     WHERE USERNAME = #{username}
   </select>
 
-  <select id="findByUsernameAndPw" resultType="me.koobin.snsserver.model.User"
-    parameterType="me.koobin.snsserver.model.UsernameAndPw">
+  <select id="findByUsernameAndPw" resultType="me.koobin.snsserver.model.user.User"
+    parameterType="me.koobin.snsserver.model.user.UsernameAndPw">
     SELECT ID,
            PASSWORD,
            NAME,
@@ -55,7 +55,7 @@
     WHERE USERNAME = #{username}
       AND PASSWORD = #{pw}
   </select>
-  <select id="findByUserId" resultType="me.koobin.snsserver.model.User"
+  <select id="findByUserId" resultType="me.koobin.snsserver.model.user.User"
     parameterType="long">
     SELECT ID,
            PASSWORD,

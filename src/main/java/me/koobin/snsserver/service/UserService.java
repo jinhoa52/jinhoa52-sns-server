@@ -1,11 +1,11 @@
 package me.koobin.snsserver.service;
 
 import me.koobin.snsserver.exception.InValidValueException;
-import me.koobin.snsserver.model.User;
-import me.koobin.snsserver.model.UserPasswordUpdateParam;
-import me.koobin.snsserver.model.UserSignUpParam;
-import me.koobin.snsserver.model.UserUpdateParam;
-import me.koobin.snsserver.model.UsernameAndPw;
+import me.koobin.snsserver.model.user.User;
+import me.koobin.snsserver.model.user.UserPasswordUpdateParam;
+import me.koobin.snsserver.model.user.UserSignUpParam;
+import me.koobin.snsserver.model.user.UserUpdateParam;
+import me.koobin.snsserver.model.user.UsernameAndPw;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {

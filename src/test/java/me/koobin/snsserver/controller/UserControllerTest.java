@@ -15,11 +15,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.koobin.snsserver.exception.InValidValueException;
-import me.koobin.snsserver.model.User;
-import me.koobin.snsserver.model.UserPasswordUpdateParam;
-import me.koobin.snsserver.model.UserSignUpParam;
-import me.koobin.snsserver.model.UserUpdateParam;
-import me.koobin.snsserver.model.UsernameAndPw;
+import me.koobin.snsserver.model.user.User;
+import me.koobin.snsserver.model.user.UserPasswordUpdateParam;
+import me.koobin.snsserver.model.user.UserSignUpParam;
+import me.koobin.snsserver.model.user.UserUpdateParam;
+import me.koobin.snsserver.model.user.UsernameAndPw;
 import me.koobin.snsserver.resolver.CurrentUserArgumentResolver;
 import me.koobin.snsserver.service.FileService;
 import me.koobin.snsserver.service.LoginService;

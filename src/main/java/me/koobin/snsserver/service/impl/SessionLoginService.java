@@ -2,7 +2,7 @@ package me.koobin.snsserver.service.impl;
 
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import me.koobin.snsserver.model.User;
+import me.koobin.snsserver.model.user.User;
 import me.koobin.snsserver.service.LoginService;
 import me.koobin.snsserver.util.SessionKeys;
 import org.springframework.stereotype.Service;

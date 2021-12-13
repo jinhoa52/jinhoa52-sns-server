@@ -1,7 +1,7 @@
 package me.koobin.snsserver.advice;
 
 import me.koobin.snsserver.exception.LoginException;
-import me.koobin.snsserver.util.ResponsesEntities;
+import me.koobin.snsserver.util.ResponseEntities;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,7 +12,7 @@ public class LoginErrorHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(LoginException.class)
   public final ResponseEntity<Void> userFoundException (){
-    return ResponsesEntities.UNAUTHORIZED;
+    return ResponseEntities.UNAUTHORIZED;
 
   }
 

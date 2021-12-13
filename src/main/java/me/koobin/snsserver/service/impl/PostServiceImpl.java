@@ -1,6 +1,5 @@
 package me.koobin.snsserver.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.mapper.PostMapper;

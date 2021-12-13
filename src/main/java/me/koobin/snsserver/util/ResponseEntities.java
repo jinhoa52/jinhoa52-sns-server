@@ -3,9 +3,9 @@ package me.koobin.snsserver.util;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class ResponsesEntities {
+public class ResponseEntities {
 
-  private ResponsesEntities() {
+  private ResponseEntities() {
     throw new IllegalStateException("Utility class");
   }
 
