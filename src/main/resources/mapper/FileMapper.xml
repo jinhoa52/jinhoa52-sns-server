@@ -9,6 +9,15 @@
     VALUES (#{fileName}, #{saveFileName}, #{contentType})
   </insert>
 
+  <insert id="insertFiles" parameterType="list"
+    useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into file (file_name, save_file_name, content_type)
+    VALUES
+    <foreach collection="fileInfos" item="info" separator=",">
+      (#{info.fileName}, #{info.saveFileName}, #{info.contentType})
+    </foreach>
+  </insert>
+
   <delete id="deleteFile" parameterType="long">
     UPDATE FILE
     SET DELETE_FLAG = 1,
@@ -21,4 +30,5 @@
     from file
     where id = #{id}
   </select>
+
 </mapper>

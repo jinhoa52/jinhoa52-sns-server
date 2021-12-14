@@ -1,4 +1,4 @@
-package me.koobin.snsserver.model;
+package me.koobin.snsserver.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

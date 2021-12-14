@@ -1,6 +1,6 @@
 package me.koobin.snsserver.service;
 
-import me.koobin.snsserver.model.User;
+import me.koobin.snsserver.model.user.User;
 
 public interface LoginService {
 

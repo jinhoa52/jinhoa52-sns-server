@@ -1,10 +1,13 @@
 package me.koobin.snsserver.service;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
+import me.koobin.snsserver.model.FileUploadInfo;
 
 public interface FileService {
 
   void deleteFile(String saveFileName);
 
-  void uploadFile(MultipartFile multipartFile, String saveFileName);
+  void uploadFiles(List<FileUploadInfo> fileUploadInfos);
+
+  void uploadFile(FileUploadInfo fileUploadInfo);
 }
