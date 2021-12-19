@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.mapper.PostMapper;
 import me.koobin.snsserver.model.PostInfo;
+import me.koobin.snsserver.model.PostFileInfo;
 import me.koobin.snsserver.model.user.User;
 import me.koobin.snsserver.service.FileInfoService;
 import me.koobin.snsserver.service.PostService;
@@ -34,8 +35,11 @@ public class PostServiceImpl implements PostService {
     postMapper.post(postInfo);
     // 포스트 이미지 등록
     postMapper.savePostImage(postInfo.getId(), fileIds);
+  }
 
+  @Override
+  public PostFileInfo getPost(Long postId) {
 
-
+    return postMapper.getPost(postId);
   }
 }
