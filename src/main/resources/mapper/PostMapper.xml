@@ -4,7 +4,6 @@
 
 <mapper namespace="me.koobin.snsserver.mapper.PostMapper">
 
-
   <insert id="post" parameterType="me.koobin.snsserver.model.PostInfo" useGeneratedKeys="true"
     keyProperty="id">
     INSERT INTO post
@@ -14,14 +13,35 @@
            , #{userId});
 
   </insert>
+
   <insert id="savePostImage">
     insert into post_file
-      (post_id
-      , file_id)
+    (post_id
+    , file_id)
     values
-           <foreach collection="fileIds" separator="," item="fileId">
-           ( #{postId}
-           , #{fileId} )
-           </foreach>
+    <foreach collection="fileIds" separator="," item="fileId">
+      ( #{postId}
+      , #{fileId} )
+    </foreach>
   </insert>
+
+  <resultMap id="postWithFile" type="me.koobin.snsserver.model.PostFileInfo">
+    <id column="post_id" property="id"/>
+    <result column="content" property="content"/>
+    <collection property="saveFileNames" ofType="string">
+      <result column="save_file_name"/>
+    </collection>
+  </resultMap>
+
+
+  <select id="getPost" resultMap="postWithFile" parameterType="list">
+    select p.id              post_id
+         , content        as content
+         , save_file_name as save_file_name
+    from post p
+           left join post_file pf on p.id = pf.post_id
+           join file f on f.ID = pf.file_id
+    where p.id = #{postId}
+      and delete_flag = 0;
+  </select>
 </mapper>

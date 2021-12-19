@@ -4,10 +4,13 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.annotation.CheckLogin;
 import me.koobin.snsserver.annotation.CurrentUser;
+import me.koobin.snsserver.model.PostFileInfo;
 import me.koobin.snsserver.model.user.User;
 import me.koobin.snsserver.service.PostService;
 import me.koobin.snsserver.util.ResponseEntities;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,4 +32,12 @@ public class PostController {
     postService.post(user, content, images);
     return ResponseEntities.CREATED;
   }
+
+  @GetMapping("/{postId}")
+  @CheckLogin
+  public ResponseEntity<PostFileInfo> getPost(@PathVariable Long postId){
+    PostFileInfo postFileInfo = postService.getPost(postId);
+    return ResponseEntity.ok(postFileInfo);
+  }
+
 }
