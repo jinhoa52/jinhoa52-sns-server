@@ -40,4 +40,10 @@ public class PostController {
     return ResponseEntity.ok(postFileInfo);
   }
 
+  @GetMapping("/my")
+  @CheckLogin
+  public ResponseEntity<List<PostFileInfo>> getMyPost(@CurrentUser User user){
+    List<PostFileInfo> postFileInfo = postService.getMyPost(user.getId());
+    return ResponseEntity.ok(postFileInfo);
+  }
 }

@@ -10,4 +10,6 @@ public interface PostService {
   void post(User user, String content, List<MultipartFile> images);
 
   PostFileInfo getPost(Long postId);
+
+  List<PostFileInfo> getMyPost(Long id);
 }
