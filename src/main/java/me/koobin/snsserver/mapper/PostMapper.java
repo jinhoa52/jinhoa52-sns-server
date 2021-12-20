@@ -13,4 +13,6 @@ public interface PostMapper {
   void savePostImage(Long postId, List<Long> fileIds);
 
   PostFileInfo getPost(Long postId);
+
+  List<PostFileInfo> findByUserId(Long userId);
 }

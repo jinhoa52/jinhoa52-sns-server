@@ -39,7 +39,11 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public PostFileInfo getPost(Long postId) {
-
     return postMapper.getPost(postId);
+  }
+
+  @Override
+  public List<PostFileInfo> getMyPost(Long userId) {
+    return postMapper.findByUserId(userId);
   }
 }
