@@ -15,6 +15,8 @@ public class FileInfo {
   private String fileName;
   private String saveFileName;
   private String contentType;
+  private String path;
+  private FileStorage fileStorage;
   private int deleteFlag;
   private LocalDateTime createDate;
   private LocalDateTime modifyDate;

@@ -12,7 +12,8 @@ import lombok.Setter;
 @Getter @Setter
 public class PostFileInfo {
   private Long id;
+  private Long userId;
   private String content;
-  private List<String> saveFileNames = new ArrayList<>();
+  private List<String> paths = new ArrayList<>();
 
 }
