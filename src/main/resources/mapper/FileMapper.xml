@@ -5,16 +5,16 @@
 
   <insert id="insertFile" parameterType="me.koobin.snsserver.model.FileInfo"
     useGeneratedKeys="true" keyColumn="id" keyProperty="id">
-    insert into file (file_name, save_file_name, content_type)
-    VALUES (#{fileName}, #{saveFileName}, #{contentType})
+    insert into file (file_name, save_file_name, content_type, file_storage, path)
+    VALUES (#{fileName}, #{saveFileName}, #{contentType}, #{fileStorage}, #{path})
   </insert>
 
   <insert id="insertFiles" parameterType="list"
     useGeneratedKeys="true" keyColumn="id" keyProperty="id">
-    insert into file (file_name, save_file_name, content_type)
+    insert into file (file_name, save_file_name, content_type, file_storage, path)
     VALUES
     <foreach collection="fileInfos" item="info" separator=",">
-      (#{info.fileName}, #{info.saveFileName}, #{info.contentType})
+      (#{info.fileName}, #{info.saveFileName}, #{info.contentType}, #{info.fileStorage}, #{info.path})
     </foreach>
   </insert>
 
