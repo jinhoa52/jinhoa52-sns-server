@@ -27,17 +27,19 @@
 
   <resultMap id="postWithFile" type="me.koobin.snsserver.model.PostFileInfo">
     <id column="post_id" property="id"/>
+    <result column="user_id" property="userId"/>
     <result column="content" property="content"/>
-    <collection property="saveFileNames" ofType="string">
-      <result column="save_file_name"/>
+    <collection property="paths" ofType="string">
+      <result column="path"/>
     </collection>
   </resultMap>
 
 
   <select id="getPost" resultMap="postWithFile" parameterType="long">
-    select p.id              post_id
-         , content        as content
-         , save_file_name as save_file_name
+    select p.id         post_id
+         , p.content as content
+         , p.user_id as user_id
+         , f.path    as path
     from post p
            left join post_file pf on p.id = pf.post_id
            join file f on f.ID = pf.file_id
@@ -46,9 +48,10 @@
   </select>
 
   <select id="findByUserId" resultMap="postWithFile" parameterType="long">
-    select p.id              post_id
-         , content        as content
-         , save_file_name as save_file_name
+    select p.id         post_id
+         , p.content as content
+         , p.user_id as user_id
+         , f.path    as path
     from post p
            left join post_file pf on p.id = pf.post_id
            join file f on f.ID = pf.file_id
