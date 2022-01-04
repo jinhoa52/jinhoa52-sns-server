@@ -11,4 +11,6 @@ public interface FileService {
   List<FileInfo> uploadFiles(List<MultipartFile> fileUploadInfos);
 
   FileInfo uploadFile(MultipartFile fileUploadInfo);
+
+  void deleteFiles(List<String> collect);
 }

@@ -57,6 +57,11 @@ public class LocalFileService implements FileService {
   }
 
   @Override
+  public void deleteFiles(List<String> saveFileNames) {
+    saveFileNames.forEach(this::deleteFile);
+  }
+
+  @Override
   public List<FileInfo> uploadFiles(List<MultipartFile> multipartFiles) {
     return multipartFiles.stream().map(this::uploadFile)
         .collect(Collectors.toList());
