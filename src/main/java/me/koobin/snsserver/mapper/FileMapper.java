@@ -9,9 +9,13 @@ public interface FileMapper {
 
   void insertFile(FileInfo file);
 
-  void deleteFile(Long id);
+  void deleteFileBy(Long id);
 
   FileInfo findById(Long id);
 
   void insertFiles(List<FileInfo> fileInfos);
+
+  List<FileInfo> findByIdIn(List<Long> fileIds);
+
+  void deleteFileByIn(List<FileInfo> fileInfos);
 }

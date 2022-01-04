@@ -14,6 +14,7 @@ public class PostFileInfo {
   private Long id;
   private Long userId;
   private String content;
-  private List<String> paths = new ArrayList<>();
+  private List<PostFile> postFiles = new ArrayList<>();
+
 
 }

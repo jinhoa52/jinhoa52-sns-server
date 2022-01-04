@@ -10,4 +10,7 @@ public interface FileInfoService {
   List<Long> saveFiles(List<MultipartFile> multipartFiles);
 
   void deleteFile(Long id);
+
+  void deleteAllFile(List<Long> fileIds);
+
 }

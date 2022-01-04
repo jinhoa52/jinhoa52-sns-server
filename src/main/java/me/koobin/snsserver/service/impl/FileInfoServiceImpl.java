@@ -32,7 +32,6 @@ public class FileInfoServiceImpl implements FileInfoService {
   }
 
 
-
   @Override
   public List<Long> saveFiles(List<MultipartFile> multipartFiles) {
 
@@ -45,6 +44,14 @@ public class FileInfoServiceImpl implements FileInfoService {
   public void deleteFile(Long id) {
     FileInfo file = fileMapper.findById(id);
     fileService.deleteFile(file.getSaveFileName());
-    fileMapper.deleteFile(id);
+    fileMapper.deleteFileBy(id);
+  }
+
+  @Override
+  public void deleteAllFile(List<Long> fileIds) {
+    List<FileInfo> fileInfos = fileMapper.findByIdIn(fileIds);
+    fileService.deleteFiles(fileInfos.stream().map(FileInfo::getSaveFileName).collect(Collectors.toList()));
+    fileMapper.deleteFileByIn(fileInfos);
+
   }
 }

@@ -3,6 +3,7 @@ package me.koobin.snsserver.resolver;
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.annotation.CurrentUser;
 import me.koobin.snsserver.mapper.UserMapper;
+import me.koobin.snsserver.model.user.User;
 import me.koobin.snsserver.service.LoginService;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolve
   }
 
   @Override
-  public Object resolveArgument(MethodParameter methodParameter,
+  public User resolveArgument(MethodParameter methodParameter,
       ModelAndViewContainer modelAndViewContainer,
       NativeWebRequest nativeWebRequest,
       WebDataBinderFactory webDataBinderFactory) {
