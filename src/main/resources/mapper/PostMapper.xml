@@ -25,12 +25,48 @@
     </foreach>
   </insert>
 
+  <update id="update" parameterType="me.koobin.snsserver.model.PatchPostInfo">
+    update post
+    set content = #{content}
+    where id = #{postId}
+  </update>
+  <delete id="deletePostFile">
+    delete from post_file
+    where post_id = #{postId} and file_id in
+    <foreach collection="fileIds" item="fileId" index="index" separator="," open="(" close=")">
+      #{fileId}
+    </foreach>
+  </delete>
+
+  <delete id="deletePostFileAndFile">
+
+    delete
+    from post_file
+    where post_id = #{postId}
+  </delete>
+  <delete id="deleteFileOfPost" parameterType="long">
+    update file
+    set DELETE_FLAG = 1
+    where id in (select file_id from post_file where post_id = #{postId});
+  </delete>
+  <delete id="deletePostFileBy" parameterType="long">
+    delete
+    from post_file
+    where post_id = #{postId};
+  </delete>
+  <delete id="deletePostBy" parameterType="long">
+    delete
+    from post
+    where id = #{postId};
+  </delete>
+
   <resultMap id="postWithFile" type="me.koobin.snsserver.model.PostFileInfo">
     <id column="post_id" property="id"/>
     <result column="user_id" property="userId"/>
     <result column="content" property="content"/>
-    <collection property="paths" ofType="string">
-      <result column="path"/>
+    <collection property="postFiles" ofType="me.koobin.snsserver.model.PostFile">
+      <result column="path" property="path"/>
+      <result column="file_id" property="fileId"/>
     </collection>
   </resultMap>
 
@@ -40,11 +76,11 @@
          , p.content as content
          , p.user_id as user_id
          , f.path    as path
+         , f.ID      as file_id
     from post p
            left join post_file pf on p.id = pf.post_id
-           join file f on f.ID = pf.file_id
-    where p.id = #{postId}
-      and delete_flag = 0;
+           left join file f on f.ID = pf.file_id and f.delete_flag = 0
+    where p.id = #{postId};
   </select>
 
   <select id="findByUserId" resultMap="postWithFile" parameterType="long">
@@ -52,10 +88,14 @@
          , p.content as content
          , p.user_id as user_id
          , f.path    as path
+         , f.ID      as file_id
     from post p
            left join post_file pf on p.id = pf.post_id
-           join file f on f.ID = pf.file_id
-    where p.user_id = #{userId}
-      and delete_flag = 0;
+           left join file f on f.ID = pf.file_id and f.delete_flag = 0
+    where p.user_id = #{userId};
+  </select>
+
+  <select id="sameAuthor" resultType="java.lang.Boolean">
+    select exists(select * from post where ID = #{postId} and user_id = #{userId})
   </select>
 </mapper>

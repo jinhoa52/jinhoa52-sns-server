@@ -73,6 +73,11 @@ public class S3FileService implements FileService {
   }
 
   @Override
+  public void deleteFiles(List<String> saveFileNames) {
+    saveFileNames.forEach(this::deleteFile);
+  }
+
+  @Override
   public List<FileInfo> uploadFiles(List<MultipartFile> fileUploadInfos) {
     return fileUploadInfos.stream().map(this::uploadFile)
         .collect(Collectors.toList());

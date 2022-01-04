@@ -14,21 +14,39 @@
     insert into file (file_name, save_file_name, content_type, file_storage, path)
     VALUES
     <foreach collection="fileInfos" item="info" separator=",">
-      (#{info.fileName}, #{info.saveFileName}, #{info.contentType}, #{info.fileStorage}, #{info.path})
+      (#{info.fileName}, #{info.saveFileName}, #{info.contentType}, #{info.fileStorage},
+      #{info.path})
     </foreach>
   </insert>
 
-  <delete id="deleteFile" parameterType="long">
+  <delete id="deleteFileBy" parameterType="long">
     UPDATE FILE
     SET DELETE_FLAG = 1,
         modify_date = now()
     WHERE ID = #{id}
+  </delete>
+  <delete id="deleteFileByIn">
+    UPDATE FILE
+    SET DELETE_FLAG = 1,
+    modify_date = now()
+    WHERE ID IN
+    <foreach collection="fileInfos" item="fileInfo" open="(" close=")" separator=",">
+      #{fileInfo.id}
+    </foreach>
   </delete>
 
   <select id="findById" resultType="me.koobin.snsserver.model.FileInfo" parameterType="long">
     select *
     from file
     where id = #{id}
+  </select>
+  <select id="findByIdIn" resultType="me.koobin.snsserver.model.FileInfo">
+    select *
+    from file
+    where id in
+    <foreach collection="fileIds" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
   </select>
 
 </mapper>

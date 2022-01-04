@@ -3,13 +3,16 @@ package me.koobin.snsserver.service.impl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.koobin.snsserver.mapper.PostMapper;
-import me.koobin.snsserver.model.PostInfo;
+import me.koobin.snsserver.model.PatchPostInfo;
 import me.koobin.snsserver.model.PostFileInfo;
+import me.koobin.snsserver.model.PostInfo;
 import me.koobin.snsserver.model.user.User;
 import me.koobin.snsserver.service.FileInfoService;
 import me.koobin.snsserver.service.PostService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -20,8 +23,9 @@ public class PostServiceImpl implements PostService {
   private final PostMapper postMapper;
   private final FileInfoService fileInfoService;
 
+
   @Override
-  public void post(User user, String content, List<MultipartFile> images) {
+  public Long post(User user, String content, List<MultipartFile> images) {
 
     // 파일 업로드
     // 파일 저장
@@ -35,6 +39,7 @@ public class PostServiceImpl implements PostService {
     postMapper.post(postInfo);
     // 포스트 이미지 등록
     postMapper.savePostImage(postInfo.getId(), fileIds);
+    return postInfo.getId();
   }
 
   @Override
@@ -45,5 +50,37 @@ public class PostServiceImpl implements PostService {
   @Override
   public List<PostFileInfo> getMyPost(Long userId) {
     return postMapper.findByUserId(userId);
+  }
+
+  @Override
+  public void patchPost(PatchPostInfo patchPostInfo) {
+    if (!postMapper.sameAuthor(patchPostInfo.getUserId(), patchPostInfo.getPostId())) {
+      throw new IllegalArgumentException("작성자가 아닙니다.");
+    }
+    // 게시판 속성 수정
+    if (StringUtils.hasText(patchPostInfo.getContent())) {
+      postMapper.update(patchPostInfo);
+    }
+    // 이미지 삭제
+    if (!patchPostInfo.getFileIds().isEmpty()) {
+      postMapper.deletePostFile(patchPostInfo.getPostId(), patchPostInfo.getFileIds());
+      fileInfoService.deleteAllFile(patchPostInfo.getFileIds());
+    }
+    // 이미지 추가
+    if (!CollectionUtils.isEmpty(patchPostInfo.getFiles())){
+      List<Long> fileIds = fileInfoService.saveFiles(patchPostInfo.getFiles());
+      postMapper.savePostImage(patchPostInfo.getPostId(), fileIds);
+    }
+  }
+
+  @Override
+  public void deletePost(Long userId, Long postId) {
+    if (!postMapper.sameAuthor(userId, postId)) {
+      throw new IllegalArgumentException("작성자가 아닙니다.");
+    }
+
+    postMapper.deleteFileOfPost(postId);
+    postMapper.deletePostFileBy(postId);
+    postMapper.deletePostBy(postId);
   }
 }
